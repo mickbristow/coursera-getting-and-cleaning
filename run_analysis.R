@@ -62,9 +62,53 @@ cleanData <- cbind(featuresdata, tempbind)
 ###REQUIREMENT TWO
 ###===============
 #extraxt mean and std deviation
-#find columns that contain "mean" in description
-#Mean <- grep("mean()", names(Master), value = FALSE, fixed = TRUE)
-meancols <- grep("mean()", names(cleanData))
-stdcols <- grep("std()", names(cleanData))
-#meanstdData <- cleanData()
+#find columns that contain "mean" or "std" in description
+colNames <- colnames(cleanData)
+wantedCols <- (grepl("activityId" , colNames) | 
+                   grepl("subjectId" , colNames) | 
+                   grepl("mean.." , colNames) | 
+                   grepl("std.." , colNames))
 
+setForMeanAndStd <- cleanData[ , wantedCols == TRUE]
+
+###REQUIREMENT THREE
+###=================
+#Uses descriptive activity names to name the activities in the data set
+setWithActivityNames <- merge(setForMeanAndStd, activityLabels,
+                              by='activityId',
+                              all.x=TRUE)
+
+
+###REQUIREMENT FOUR
+###================
+#Appropriately labels the data set with descriptive variable names
+
+colNames <- colnames(setWithActivityNames)
+for (i in 1:length(colNames)) 
+{
+  #print(i)
+  #print(colNames[i])
+  colNames[i] = gsub("\\()","",colNames[i])
+  colNames[i] = gsub("-std$","StdDev",colNames[i])
+  colNames[i] = gsub("-mean","Mean",colNames[i])
+  colNames[i] = gsub("^(t)","time",colNames[i])
+  colNames[i] = gsub("^(f)","freq",colNames[i])
+  colNames[i] = gsub("([Gg]ravity)","Gravity",colNames[i])
+  colNames[i] = gsub("([Bb]ody[Bb]ody|[Bb]ody)","Body",colNames[i])
+  colNames[i] = gsub("[Gg]yro","Gyro",colNames[i])
+  colNames[i] = gsub("AccMag","AccMagnitude",colNames[i])
+  colNames[i] = gsub("([Bb]odyaccjerkmag)","BodyAccJerkMagnitude",colNames[i])
+  colNames[i] = gsub("JerkMag","JerkMagnitude",colNames[i])
+  colNames[i] = gsub("GyroMag","GyroMagnitude",colNames[i])
+  #print(colNames[i])
+}
+colnames(setWithActivityNames) = colNames
+
+###REQUIREMENT FIVE
+###================
+#From the data set in step 4, creates a second, independent tidy data set with the average 
+#of each variable for each activity and each subject
+secTidySet <- aggregate(. ~subjectId + activityId, setWithActivityNames, mean)
+secTidySet <- secTidySet[order(secTidySet$subjectId, secTidySet$activityId),]
+
+write.table(secTidySet, file = "Tidy.txt", row.names = FALSE)
