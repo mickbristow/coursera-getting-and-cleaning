@@ -1,3 +1,4 @@
+#Uncomment and set to desired working directory
 #setwd("C:\\Users\\micha\\coursera-getting-and-cleaning")
 
 #check if data dorectory exists
@@ -108,7 +109,7 @@ colnames(setWithActivityNames) = colNames
 ###================
 #From the data set in step 4, creates a second, independent tidy data set with the average 
 #of each variable for each activity and each subject
-secTidySet <- aggregate(. ~subjectId + activityId, setWithActivityNames, mean)
-secTidySet <- secTidySet[order(secTidySet$subjectId, secTidySet$activityId),]
+tidyData <- aggregate(. ~subjectId + activityId, setWithActivityNames, mean)
+tidyData <- tidyData[order(tidyData$subjectId, tidyData$activityId),]
 
-write.table(secTidySet, file = "Tidy.txt", row.names = FALSE)
+write.table(tidyData, file = "Tidy.txt", row.names = FALSE)
