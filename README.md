@@ -1,6 +1,8 @@
 # coursera -> Getting and Cleaning
-Peer reviewed project for Coursera course
+Peer reviewed project for Coursera course.
+
 Michael Bristow
+
 Repo for the submission of the course project for the Johns Hopkins Getting and Cleaning Data course.
 
 ### Project Overview
